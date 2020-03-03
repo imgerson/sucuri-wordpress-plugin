@@ -102,7 +102,7 @@ class SucuriScanHardeningPage extends SucuriScan
         }
 
         $params['Hardening.FieldName'] = __FUNCTION__;
-        $params['Hardening.Title'] = __('Website Firewall Protection', 'sucuri-scanner');
+        $params['Hardening.Title'] = __('Enable Website Firewall Protection', 'sucuri-scanner');
         $params['Hardening.Description'] = __('A WAF is a protection layer for your web site, blocking all sort of attacks (brute force attempts, DDoS, SQL injections, etc) and helping it remain malware and blacklist free. This test checks if your site is using Sucuri Firewall to protect your site.', 'sucuri-scanner');
 
         if (!SucuriScan::isBehindFirewall()) {
@@ -407,7 +407,7 @@ class SucuriScanHardeningPage extends SucuriScan
             }
         }
 
-        $params['Hardening.Title'] = __('Information Leakage', 'sucuri-scanner');
+        $params['Hardening.Title'] = __('Avoid Information Leakage', 'sucuri-scanner');
         $params['Hardening.Description'] = __('Checks if the WordPress README file still exists in the website. The information in this file can be used by malicious users to pin-point which disclosed vulnerabilities are associated to the website. Be aware that WordPress recreates this file automatically with every update.', 'sucuri-scanner');
 
         if (file_exists(ABSPATH . '/readme.html')) {
@@ -443,7 +443,7 @@ class SucuriScanHardeningPage extends SucuriScan
         $results = $user_query->get_results();
 
         $params['URL.Settings'] = admin_url('users.php?role=administrator');
-        $params['Hardening.Title'] = __('Default Admin Account', 'sucuri-scanner');
+        $params['Hardening.Title'] = __('Verify Default Admin Account', 'sucuri-scanner');
         $params['Hardening.Description'] = __('Check if the primary user account still uses the name "admin". This allows malicious users to easily identify which account has the highest privileges to target an attack.', 'sucuri-scanner');
 
         if (count($results) === 0) {
@@ -536,7 +536,7 @@ class SucuriScanHardeningPage extends SucuriScan
             }
         }
 
-        $params['Hardening.Title'] = __('Plugin and Theme Editor', 'sucuri-scanner');
+        $params['Hardening.Title'] = __('Disable Plugin and Theme Editor', 'sucuri-scanner');
         $params['Hardening.Description'] = __('Disables the theme and plugin editors to prevent unwanted modifications to the code. If you are having problems reverting this please open the wp-config.php file and delete the line with the constant DISALLOW_FILE_EDIT.', 'sucuri-scanner');
 
         if ($fileEditorWasDisabled) {
@@ -547,6 +547,58 @@ class SucuriScanHardeningPage extends SucuriScan
             $params['Hardening.Status'] = 0;
             $params['Hardening.FieldName'] = __FUNCTION__;
             $params['Hardening.FieldText'] = __('Apply Hardening', 'sucuri-scanner');
+        }
+
+        return self::drawSection($params);
+    }
+
+    /**
+     * Checks if the Automatic Secret Keys Updater is enabled.
+     *
+     * Changing the Secret Keys will invalidate all existing cookies, forcing all
+     * logged in users to login again. Doing this frequently will decrease the
+     * chances of misuse of sessions left open on unprotected devices.
+     *
+     * @return string HTML code with the replaced template variables
+     */
+    public static function autoSecretKeyUpdater()
+    {
+        $cronName = 'sucuriscan_autoseckeyupdater';
+        $cronFrequency = 'weekly';
+
+        // Activate auto secret key update.
+        if (self::processRequest(__FUNCTION__)) {
+            if (SucuriScanEvent::addScheduledTask($cronName, $cronFrequency)) {
+                SucuriScanInterface::info(__('Automatic Secret Keys Updater enabled. The default frequency is "Weekly", but you can change the frequency on Settings -> Post-Hack -> Update Secret Keys section.', 'sucuri-scanner'));
+                SucuriScanEvent::reportNoticeEvent(__('Automatic Secret Keys Updater enabled.', 'sucuri-scanner'));
+            } else {
+                SucuriScanInterface::error(__('Something went wrong.', 'sucuri-scanner'));
+            }
+        }
+
+        // Deactivate auto secret key update.
+        if (self::processRequest(__FUNCTION__ . '_revert')) {
+            if (SucuriScanEvent::deleteScheduledTask($cronName)) {
+                SucuriScanInterface::info(__('Automatic Secret Keys Updater disabled.', 'sucuri-scanner'));
+                SucuriScanEvent::reportNoticeEvent(__('Automatic Secret Keys Updater disabled.', 'sucuri-scanner'));
+            } else {
+                SucuriScanInterface::error(__('Something went wrong.', 'sucuri-scanner'));
+            }
+        }
+        
+        // Set status of auto secret key update.
+        $params = array();
+        $params['Hardening.Title'] = __('Activate Automatic Secret Keys Updater', 'sucuri-scanner');
+        $params['Hardening.Description'] = __('Changing the Secret Keys will invalidate all existing cookies, forcing all logged in users to login again. Doing this frequently will decrease the chances of misuse of sessions left open on unprotected devices.', 'sucuri-scanner');
+
+        $params['Hardening.Status'] = 0;
+        $params['Hardening.FieldName'] = __FUNCTION__;
+        $params['Hardening.FieldText'] = __('Apply Hardening', 'sucuri-scanner');
+
+        if (wp_next_scheduled($cronName)) {
+            $params['Hardening.Status'] = 1;
+            $params['Hardening.FieldName'] = __FUNCTION__.'_revert';
+            $params['Hardening.FieldText'] = __('Revert Hardening', 'sucuri-scanner');
         }
 
         return self::drawSection($params);
