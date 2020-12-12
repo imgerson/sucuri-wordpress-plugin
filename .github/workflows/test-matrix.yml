@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    branches: [ testing-matrix ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        php-versions: [ 5.6, 7.3, 7.4 ]
+        wp-versions: [ 5.0, 5.6 ]
+
+    name: Running tests on WP ${{ matrix.wp-version }} on ${{ matrix.php-version }}
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: Output env information
+        run: |
+          echo PHP ${{ matrix.php-version }}
+          echo WP ${{ matrix.wp-version }}
