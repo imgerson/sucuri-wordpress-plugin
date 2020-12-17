@@ -1,4 +1,7 @@
 {
-    "core": null,
-    "plugins": ["."]
+    "core": "WordPress/WordPress#5.2",
+    "plugins": [
+        "."
+    ],
+    "phpVersion": "7.2.0"
 }
