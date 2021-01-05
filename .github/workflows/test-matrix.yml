@@ -55,4 +55,13 @@ jobs:
       - name: Run E2E tests
         run: |
           cp cypress.json.example cypress.json
-          npx cypress run --config video=false
+          npx cypress run
+
+      - name: Upload Cypress tests on failure
+        uses: actions/upload-artifact@v2.2.1
+        if: failure()
+        with:
+          name: cypress
+          path: |
+            cypress/videos
+            cypress/screenshots
