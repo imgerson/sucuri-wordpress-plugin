@@ -13,21 +13,13 @@ jobs:
 
     strategy:
       matrix:
-        php: [ '7.3' ]
-        wp: [ '5.5', '5.6' ]
+        php: [ '5.6', '7.3', '7.4' ]
+        wp: [ '4.3', '4.5', '5.1', '5.5', '5.6' ]
 
     name: WP ${{ matrix.wp }} on PHP ${{ matrix.php }}
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-
-      - name: Set up PHP
-        uses: shivammathur/setup-php@2.9.0
-        with:
-          php-version: ${{ matrix.php }}
-          
-      - name: Shows PHP information
-        run: php --version
 
       - name: Output env information
         env:
@@ -50,5 +42,12 @@ jobs:
           PHP_VERSION: ${{ matrix.php }}
         run: WP_ENV_PHP_VERSION=$PHP_VERSION npx wp-env start
       
-      - name: Show PHP information
-        run: npx wp-env run cli "php --version"
+      - name: Output environment information
+        run: |
+          npx wp-env run cli "php --version"
+          npx wp-env run cli "wp core version"
+
+      - name: Run E2E tests
+        run: |
+          cp cypress.json.example cypress.json
+          npx cypress run --config video=false
