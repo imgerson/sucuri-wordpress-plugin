@@ -5,3 +5,6 @@ cypress/videos
 cypress/screenshots
 
 cypress.json
+.wp-env.json
+
+.DS_Store
