@@ -45,7 +45,9 @@ jobs:
       - name: Start WordPress environment
         env:
           PHP_VERSION: ${{ matrix.php }}
-        run: WP_ENV_PHP_VERSION=$PHP_VERSION npx wp-env start
+        run: |
+          WP_ENV_PHP_VERSION=$PHP_VERSION npx wp-env start
+          npx wp-env run cli "wp user create sucuri sucuri@sucuri.net --role=author --user_pass=password"
       
       - name: Output environment information
         run: |
