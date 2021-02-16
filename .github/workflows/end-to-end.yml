@@ -32,7 +32,6 @@ jobs:
           WP_VERSION: ${{ matrix.wp }}
         run: |
           echo "{ \"core\": \"WordPress/WordPress#$WP_VERSION\", \"plugins\": [\".\"], \"phpVersion\": \"$PHP_VERSION\" }" > .wp-env.json
-          cat .wp-env.json
           
       - name: Install NodeJS
         uses: actions/setup-node@v1
