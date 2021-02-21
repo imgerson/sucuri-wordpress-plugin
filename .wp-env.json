@@ -1,5 +1,5 @@
 {
-    "core": null,
+    "core": "https://wordpress.org/wordpress-5.5.zip",
     "plugins": ["."],
     "phpVersion": "7.2"
 }
