@@ -184,10 +184,10 @@ describe( 'Run integration tests', () => {
 		cy.get('input[name=sucuriscan_hardening_wpuploads_revert]').click();
 		cy.get('.sucuriscan-alert').contains('Hardening reverted in the uploads directory');
 
-		cy.get('input[name=sucuriscan_hardening_wpcontent]').click();
-		cy.get('.sucuriscan-alert').contains('Hardening applied to the content directory');
-		cy.get('input[name=sucuriscan_hardening_wpcontent_revert]').click();
-		cy.get('.sucuriscan-alert').contains('Hardening reverted in the content directory');
+		// cy.get('input[name=sucuriscan_hardening_wpcontent]').click();
+		// cy.get('.sucuriscan-alert').contains('Hardening applied to the content directory');
+		// cy.get('input[name=sucuriscan_hardening_wpcontent_revert]').click();
+		// cy.get('.sucuriscan-alert').contains('Hardening reverted in the content directory');
 
 		cy.get('input[name=sucuriscan_hardening_wpincludes]').click();
 		cy.get('.sucuriscan-alert').contains('Hardening applied to the library directory');
