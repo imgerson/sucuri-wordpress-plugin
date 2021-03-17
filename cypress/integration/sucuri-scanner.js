@@ -247,7 +247,8 @@ describe( 'Run integration tests', () => {
 	it('can reset installed plugins', () => {
 		cy.visit('/wp-admin/admin.php?page=sucuriscan_settings&sucuriscan_lastlogin=1#posthack');
 
-		cy.get('input[value="akismet/akismet.php"]').click();
+		// "Hello Dolly"
+		cy.get('input[value="hello.php"]').click();
 		cy.get('[data-cy=sucuriscan_reset_plugins_submit]').click();
 
 		cy.get('[data-cy=sucuriscan_reset_plugin_response]').contains('Loading');
