@@ -31,6 +31,9 @@ jobs:
           - env_2: 'WordPress 5.6 on PHP 7.3'
             php: '7.3'
             wp: '5.6'
+          - env_3: 'WordPress 4.5 on PHP 5.6'
+            php: '5.6'
+            wp: '4.5'
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v2
