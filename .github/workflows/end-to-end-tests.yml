@@ -20,11 +20,27 @@ jobs:
   # - Install WordPress within the Docker container.
   # - Run the E2E tests.
   e2e-tests:
-    name: E2E Tests
+    name: WP ${{ matrix.wp }} on PHP ${{ matrix.php }}
     runs-on: ubuntu-16.04
+    strategy:
+      matrix:
+        include:
+          - env_1: 'WordPress 5.5 on PHP 7.3'
+            php: '7.3'
+            wp: '5.5'
+          - env_2: 'WordPress 5.6 on PHP 7.3'
+            php: '7.3'
+            wp: '5.6'
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v2
+
+      - name: Output env information
+        env:
+          PHP_VERSION: ${{ matrix.php }}
+          WP_VERSION: ${{ matrix.wp }}
+        run: |
+          echo "{ \"core\": \"WordPress/WordPress#$WP_VERSION\", \"plugins\": [\".\"], \"phpVersion\": \"$PHP_VERSION\" }" > .wp-env.json
 
       - name: Log debug information
         run: |
@@ -57,8 +73,10 @@ jobs:
         run: npm install
 
       - name: Start WordPress environment
+        env:
+          PHP_VERSION: ${{ matrix.php }}
         run: |
-          npx wp-env start
+          WP_ENV_PHP_VERSION=$PHP_VERSION npx wp-env start
           npx wp-env run cli "wp user create sucuri sucuri@sucuri.net --role=author --user_pass=password"
 
       - name: Log running Docker containers
