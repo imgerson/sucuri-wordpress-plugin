@@ -30,7 +30,7 @@ jobs:
             wp: '5.1'
           - env_2: 'WordPress 5.2 on PHP 7.2'
             php: '7.2'
-            wp: '5.1'
+            wp: '5.2'
           - env_3: 'WordPress 5.3 on PHP 7.3'
             php: '7.3'
             wp: '5.3'
