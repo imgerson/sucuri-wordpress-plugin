@@ -62,8 +62,8 @@ jobs:
           PHP_VERSION: ${{ matrix.php }}
           WP_VERSION: ${{ matrix.wp }}
         run: |
-          echo "{ \"core\": \"WordPress/WordPress#$WP_VERSION\", \"plugins\": [\".\"], \"phpVersion\": \"$PHP_VERSION\" }" > .wp-env.json
-          if [[ $WP_VERSION == "latest" ]]; then echo "{ \"core\": null, \"plugins\": [\".\"], \"phpVersion\": \"$PHP_VERSION\" }" > .wp-env.json; fi
+          if [[ $WP_VERSION == "latest" ]]; then export WP_CORE="null"; else export WP_CORE="\"WordPress/WordPress#$WP_VERSION\""
+          echo "{ \"core\": $WP_CORE, \"plugins\": [\".\"], \"phpVersion\": \"$PHP_VERSION\" }" > .wp-env.json
 
       - name: Log debug information
         run: |
