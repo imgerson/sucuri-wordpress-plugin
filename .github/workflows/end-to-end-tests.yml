@@ -40,12 +40,19 @@ jobs:
           - env_5: 'WordPress 5.5 on PHP 7.4'
             php: '7.4'
             wp: '5.5'
-          - env_5: 'WordPress 5.6 on PHP 7.4'
+          - env_6: 'WordPress 5.6 on PHP 7.4'
             php: '7.4'
             wp: '5.6'
-          - env_6: 'WordPress 5.7 on PHP 7.4'
+          - env_7: 'WordPress 5.7 on PHP 7.4'
             php: '7.4'
             wp: '5.7'
+          - env_8: 'Latest version of WordPress on PHP 7.4'
+            php: '7.4'
+            wp: 'latest'
+          - env_9: 'Latest version of WordPress on PHP 8'
+            php: '8.0'
+            wp: 'latest'
+
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v2
@@ -56,6 +63,7 @@ jobs:
           WP_VERSION: ${{ matrix.wp }}
         run: |
           echo "{ \"core\": \"WordPress/WordPress#$WP_VERSION\", \"plugins\": [\".\"], \"phpVersion\": \"$PHP_VERSION\" }" > .wp-env.json
+          if [[ $WP_VERSION == "latest" ]]; then echo "{ \"core\": null, \"plugins\": [\".\"], \"phpVersion\": \"$PHP_VERSION\" }" > .wp-env.json; fi
 
       - name: Log debug information
         run: |
