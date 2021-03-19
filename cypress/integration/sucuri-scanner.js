@@ -173,7 +173,7 @@ describe( 'Run integration tests', () => {
 		cy.get('[data-cy=sucuriscan_ignore_files_folders_table]').contains('no data available');
 	});
 
-	it.only('can toggle hardening options', () => {
+	it('can toggle hardening options', () => {
 		cy.visit('/wp-admin/admin.php?page=sucuriscan_settings#hardening');
 
 		cy.get('input[name=sucuriscan_hardening_firewall]').click();
