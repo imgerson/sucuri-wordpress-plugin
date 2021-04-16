@@ -5,6 +5,8 @@ on:
   release:
     types: [published]
 
+  workflow_dispatch:
+
 jobs:
   # Deploys new releases to wordpress.org.
   #
