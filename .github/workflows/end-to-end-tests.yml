@@ -80,9 +80,9 @@ jobs:
           WP_VERSION: ${{ matrix.wp }}
         run: |
           if [[ $WP_VERSION == "latest" ]]; then
-            echo "{ \"core\": null, \"plugins\": [\".\"], \"phpVersion\": \"$PHP_VERSION\" }" > .wp-env.override.json
+            echo "{ \"core\": null, \"plugins\": [\".\", \"akismet\"], \"phpVersion\": \"$PHP_VERSION\" }" > .wp-env.override.json
           else
-            echo "{ \"core\": \"WordPress/WordPress#$WP_VERSION\", \"plugins\": [\".\"], \"phpVersion\": \"$PHP_VERSION\" }" > .wp-env.override.json
+            echo "{ \"core\": \"WordPress/WordPress#$WP_VERSION\", \"plugins\": [\".\", \"akismet\"], \"phpVersion\": \"$PHP_VERSION\" }" > .wp-env.override.json
           fi
           cat .wp-env.override.json
 
@@ -90,7 +90,6 @@ jobs:
         run: |
           npx wp-env start
           npx wp-env run tests-cli "wp user create sucuri sucuri@sucuri.net --role=author --user_pass=password"
-          npx wp-env run tests-cli "wp plugin install akismet --activate"
           npx wp-env run tests-cli "touch .htaccess"
 
       - name: Log WordPress debug information
