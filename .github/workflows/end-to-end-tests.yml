@@ -21,7 +21,7 @@ jobs:
   # - Run the E2E tests.
   e2e-tests:
     name: E2E Tests
-    runs-on: macos-11
+    runs-on: macos-latest
     strategy:
       matrix:
         include:
