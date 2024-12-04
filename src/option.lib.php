@@ -279,7 +279,66 @@ class SucuriScanOption extends SucuriScanRequest
                     'pagination_factor' => 'unavailable',
                     'old_age_multiplier' => 'unavailable',
                 ),
-            )
+            ),
+
+            'sucuriscan_headers_csp' => 'disabled',
+            'sucuriscan_headers_csp_options' => array(
+                'default_src' => array(
+                    'id' => 'default_src',
+                    'title' => __('Default Source', 'sucuri-scanner'),
+                    'value' => "'self'",
+                ),
+                'script_src' => array(
+                    'id' => 'script_src',
+                    'title' => __('Script Source', 'sucuri-scanner'),
+                    'value' => "'self'",
+                ),
+                'style_src' => array(
+                    'id' => 'style_src',
+                    'title' => __('Style Source', 'sucuri-scanner'),
+                    'value' => "'self'",
+                ),
+                'img_src' => array(
+                    'id' => 'img_src',
+                    'title' => __('Image Source', 'sucuri-scanner'),
+                    'value' => "'self'",
+                ),
+                'connect_src' => array(
+                    'id' => 'connect_src',
+                    'title' => __('Connect Source', 'sucuri-scanner'),
+                    'value' => "'self'",
+                ),
+                'font_src' => array(
+                    'id' => 'font_src',
+                    'title' => __('Font Source', 'sucuri-scanner'),
+                    'value' => "'self'",
+                ),
+                'object_src' => array(
+                    'id' => 'object_src',
+                    'title' => __('Object Source', 'sucuri-scanner'),
+                    'value' => "'none'",
+                ),
+                'media_src' => array(
+                    'id' => 'media_src',
+                    'title' => __('Media Source', 'sucuri-scanner'),
+                    'value' => "'self'",
+                ),
+                'frame_src' => array(
+                    'id' => 'frame_src',
+                    'title' => __('Frame Source', 'sucuri-scanner'),
+                    'value' => "'none'",
+                ),
+                'sandbox' => array(
+                    'id' => 'sandbox',
+                    'title' => __('Sandbox', 'sucuri-scanner'),
+                    'value' => '',
+                ),
+                'report_uri' => array(
+                    'id' => 'report_uri',
+                    'title' => __('Report URI', 'sucuri-scanner'),
+                    'value' => '',
+                ),
+            ),
         );
 
         return (array)apply_filters('sucuriscan_option_defaults', $defaults);

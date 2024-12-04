@@ -261,4 +261,32 @@ class SucuriScanCacheHeaders extends SucuriScan
         $header = $this->selectCacheDirective();
         $this->mergeHttpHeader($header);
     }
+
+    protected function getCSPDirectives()
+    {
+        $cspOptions = SucuriScanOption::getOption(':headers_csp_options');
+        $directives = array();
+
+        foreach ($cspOptions as $directive => $option) {
+            $value = $option['value'];
+            if (!empty($value)) {
+                $directives[] = "$directive $value";
+            }
+        }
+
+        return implode('; ', $directives);
+    }
+
+    public function setCSPHeaders()
+    {
+        if (headers_sent()) {
+            // Headers are already sent; nothing to do here.
+            return;
+        }
+
+        $cspHeader = $this->getCSPDirectives();
+        if (!empty($cspHeader)) {
+            header("Content-Security-Policy: $cspHeader", true);
+        }
+    }
 }

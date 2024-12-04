@@ -130,3 +130,58 @@ function sucuriscan_settings_cache_options($nonce)
 
     return SucuriScanTemplate::getSection('settings-headers-cache', $params);
 }
+
+/**
+ * Returns the HTML to configure the header's CSP options.
+ *
+ * Content Security Policy (CSP) is a security feature that helps prevent various types of attacks,
+ * such as Cross-Site Scripting (XSS) and data injection attacks.
+ *
+ * @param bool $nonce True if the CSRF protection worked, false otherwise.
+ * @return  string          HTML for the CSP settings.
+ */
+function sucuriscan_settings_csp_options($nonce)
+{
+    $params = array(
+        'CSPOptions.Options' => '',
+    );
+
+    $headersCSPControlOptions = SucuriScanOption::getOption(':headers_csp_options');
+
+    if (SucuriScanInterface::checkNonce() && SucuriScanRequest::post(':update_csp_options')) {
+        $newOptions = array();
+
+        foreach ($headersCSPControlOptions as $directive => $options) {
+            $newOptions[$directive] = array();
+
+            foreach ($options as $optionName => $defaultValue) {
+                $postKey = 'sucuriscan_' . $directive . '_' . $optionName;
+                $postValue = sanitize_text_field(SucuriScanRequest::post($postKey));
+
+                if (isset($_POST[$postKey])) {
+                    $newOptions[$directive][$optionName] = $postValue;
+                } else {
+                    $newOptions[$directive][$optionName] = $defaultValue;
+                }
+            }
+        }
+
+        SucuriScanOption::updateOption(':headers_csp_options', $newOptions);
+        SucuriScanInterface::info(__('Content Security Policy settings were updated.', 'sucuri-scanner'));
+    }
+
+    $latestHeadersCSPControlOptions = SucuriScanOption::getOption(':headers_csp_options');
+
+    foreach ($latestHeadersCSPControlOptions as $option) {
+        $params['CSPOptions.Options'] .= SucuriScanTemplate::getSnippet(
+            'settings-headers-csp-option',
+            array(
+                'id' => $option['id'],
+                'name' => $option['title'],
+                'value' => $option['value'],
+            )
+        );
+    }
+
+    return SucuriScanTemplate::getSection('settings-headers-csp', $params);
+}

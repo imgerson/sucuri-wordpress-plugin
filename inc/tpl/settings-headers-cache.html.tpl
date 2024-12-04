@@ -198,6 +198,79 @@
             });
         });
     });
+
+    jQuery(document).ready(function ($) {
+        $('.sucuriscan-header-csp-edit-btn').each(function () {
+            $(this).click(function (e) {
+                e.preventDefault();
+
+                var isEditing = $(this).text().trim() === 'Edit';
+
+                var row = $(this).closest('tr');
+                var directive = $(this).closest('tr').data('page');
+
+                var spans = $('.sucuriscan-row-' + directive + ' .sucuriscan-headers-csp-value:not(.sucuriscan-unavailable)');
+                var inputs = $('.sucuriscan-row-' + directive + ' .sucuriscan-headers-csp-input:not(.sucuriscan-unavailable)');
+
+                // Check if the row is already in editing mode
+                if (isEditing) {
+                    row.addClass('sucuriscan-headers-csp-is-editing');
+
+                    spans.each(function (index, span) {
+                        $(span).addClass('sucuriscan-hidden');
+                    });
+
+                    inputs.each(function (index, input) {
+                        $(input).removeClass('sucuriscan-hidden');
+                    });
+
+                    $(this).text('Update');
+                } else {
+                    var newValues = {};
+
+                    row.removeClass('sucuriscan-headers-csp-is-editing');
+
+                    inputs.each(function (index, input) {
+                        var newValue = $(input).val();
+                        $(spans[index]).text(newValue);
+                        newValues[this.name] = newValue;
+                    });
+
+                    spans.each(function (index, span) {
+                        $(span).removeClass('sucuriscan-hidden');
+                    });
+
+                    inputs.each(function (index, input) {
+                        if ($(input).attr('type') !== 'checkbox') {
+                            $(input).addClass('sucuriscan-hidden');
+                        }
+                    });
+
+                    $(this).text('Edit');
+
+                    inputs.each(function () {
+                        newValues[this.name] = this.value;
+                    });
+
+                    $.post('%%SUCURI.URL.Settings%%#headers', {
+                        sucuriscan_page_nonce: '%%SUCURI.PageNonce%%',
+                        sucuriscan_update_csp_options: 1,
+                        sucuriscan_page_type: directive,
+                        ...newValues,
+                    });
+
+                    // Update the box to enabled
+                    var cspControlStatusDiv = $('.sucuriscan-double-box-update');
+                    var cspControlStatusSpan = cspControlStatusDiv.find('span');
+
+                    cspControlStatusDiv.removeClass('sucuriscan-hstatus-0');
+                    cspControlStatusDiv.addClass('sucuriscan-hstatus-1');
+
+                    cspControlStatusSpan.text('Enabled');
+                }
+            });
+        });
+    });
 </script>
 
 <!-- In order to avoid re-using the same SVG over and over again: -->
@@ -328,6 +401,55 @@
 
                 <input type="submit" value="{{Submit}}" class="button button-primary"
                        data-cy="sucuriscan_headers_cache_control_submit_btn"/>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="sucuriscan-panel">
+    <h3 class="sucuriscan-title">{{Content Security Policy (CSP) Options}}</h3>
+
+    <form action="%%SUCURI.URL.Settings%%#headers" method="post">
+        <div class="inside">
+            <p>{{Content Security Policy (CSP) is a security feature that helps prevent various types of attacks, such as Cross-Site Scripting (XSS) and data injection attacks.}}</p>
+            <p>{{Here you can see all the CSP options available.}}</p>
+
+            <table class="wp-list-table widefat sucuriscan-table sucuriscan-table-fixed-layout sucuriscan-table-double-title sucuriscan-last-logins">
+                <thead>
+                <tr>
+                    <th class="manage-column">{{Directive}} </th>
+                    <th class="manage-column">{{Value}}</th>
+                    <th class="manage-column">&nbsp;</th>
+                </tr>
+                </thead>
+
+                <tbody data-cy="sucuriscan_csp_options_table">
+
+                %%%SUCURI.CSPOptions.Options%%%
+
+                <tr class="sucuriscan-%%SUCURI.CSPOptions.NoItemsVisibility%%">
+                    <td colspan="3">
+                        <em>{{No options available}}</em>
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="sucuriscan-double-box sucuriscan-hstatus sucuriscan-double-box-update sucuriscan-hstatus-%%SUCURI.CSPOptions.CSPControl%%"
+             data-cy="sucuriscan_headers_csp_control">
+            <p>
+                <strong>{{Content Security Policy}}</strong> &mdash; <span>%%SUCURI.CSPOptions.Status%%</span><br/>
+                {{Content Security Policy (CSP) is a security feature that helps prevent various types of attacks, such as Cross-Site Scripting (XSS) and data injection attacks.}}
+            </p>
+
+            <input type="hidden" name="sucuriscan_page_nonce" value="%%SUCURI.PageNonce%%"/>
+            <input type="hidden" name="sucuriscan_update_csp_options" value="1"/>
+
+            <div>
+                <input type="submit" value="{{Submit}}" class="button button-primary"
+                       data-cy="sucuriscan_headers_csp_control_submit_btn"/>
             </div>
         </div>
     </form>

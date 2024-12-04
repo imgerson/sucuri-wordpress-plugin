@@ -1236,4 +1236,54 @@ describe("Run e2e tests", () => {
 
         cy.get('.sucuriscan-auditlog-entry').should('have.length.greaterThan', 0);
     });
+
+    it("can toggle CSP settings", () => {
+        cy.visit("/wp-admin/admin.php?page=sucuriscan_settings#headers");
+
+        cy.get("[data-cy=sucuriscan_headers_csp_control_submit_btn]").click({
+            force: true,
+        });
+        cy.get(".sucuriscan-alert").contains(
+            "Content Security Policy settings were updated.",
+        );
+
+        cy.visit("/wp-admin/admin.php?page=sucuriscan_lastlogins#allusers");
+
+        cy.clearCookies();
+
+        // main page
+        cy.request("/").then((response) => {
+            expect(response.headers["content-security-policy"]).to.exist;
+            expect(response.headers["content-security-policy"]).to.equal(
+                "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; font-src 'self'; object-src 'none'; media-src 'self'; frame-src 'none';",
+            );
+        });
+    });
+
+    it("can customize CSP settings", () => {
+        cy.visit("/wp-admin/admin.php?page=sucuriscan_settings#headers");
+
+        cy.get("[data-cy=sucuriscan-row-default_src]").click();
+        cy.get("[name=sucuriscan_default_src_value]").clear().type("'self' https://example.com");
+        cy.get("[data-cy=sucuriscan-row-default_src]").click();
+
+        cy.get("[data-cy=sucuriscan_headers_csp_control_submit_btn]").click({
+            force: true,
+        });
+        cy.get(".sucuriscan-alert").contains(
+            "Content Security Policy settings were updated.",
+        );
+
+        cy.visit("/wp-admin/admin.php?page=sucuriscan_lastlogins#allusers");
+
+        cy.clearCookies();
+
+        // main page
+        cy.request("/").then((response) => {
+            expect(response.headers["content-security-policy"]).to.exist;
+            expect(response.headers["content-security-policy"]).to.equal(
+                "default-src 'self' https://example.com; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; font-src 'self'; object-src 'none'; media-src 'self'; frame-src 'none';",
+            );
+        });
+    });
 });

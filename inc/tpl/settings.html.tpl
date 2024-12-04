@@ -8,6 +8,7 @@
         <li><a href="%%SUCURI.URL.Settings%%#headers">{{Headers}}</a></li>
         <li><a href="%%SUCURI.URL.Settings%%#apiservice">{{API Service Communication}}</a></li>
         <li><a href="%%SUCURI.URL.Settings%%#webinfo">{{Website Info}}</a></li>
+        <li><a href="%%SUCURI.URL.Settings%%#csp">{{Content Security Policy}}</a></li>
     </ul>
 
     <div class="sucuriscan-tabs-containers">
@@ -97,6 +98,10 @@
 
         <div id="sucuriscan-tabs-headers">
             %%%SUCURI.Settings.Headers.Cache%%%
+        </div>
+
+        <div id="sucuriscan-tabs-csp">
+            %%%SUCURI.Settings.Headers.CSP%%%
         </div>
 
         <div id="sucuriscan-tabs-apiservice">
